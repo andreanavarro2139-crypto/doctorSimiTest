@@ -11,9 +11,9 @@ import java.io.IOException;
 
 public class GerenteController {
     private static ArrayList<Gerente> listaGerentes = new ArrayList<>();
-    private static final Path DATA_DIR = Paths.get(System.getProperty("user.home"), ".doctorSimiTest", "data");
+    private static final Path DATA_DIR = Paths.get(System.getProperty("user.dir"), "data");
     private static final Path DATA_FILE = DATA_DIR.resolve("gerentes.csv");
-    private static final Path LEGACY_DATA_FILE = Paths.get("data").resolve("gerentes.csv");
+    private static final Path LEGACY_DATA_FILE = Paths.get("user.dir").resolve("data/gerentes.csv");
 
     static {
         loadFromFile();

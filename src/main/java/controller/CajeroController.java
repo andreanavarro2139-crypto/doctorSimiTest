@@ -11,9 +11,9 @@ import java.io.IOException;
 
 public class CajeroController {
     private static ArrayList<Cajero> listaCajeros = new ArrayList<>();
-    private static final Path DATA_DIR = Paths.get(System.getProperty("user.home"), ".doctorSimiTest", "data");
+    private static final Path DATA_DIR = Paths.get(System.getProperty("user.dir"), "data");
     private static final Path DATA_FILE = DATA_DIR.resolve("cajeros.csv");
-    private static final Path LEGACY_DATA_FILE = Paths.get("data").resolve("cajeros.csv");
+    private static final Path LEGACY_DATA_FILE = Paths.get("user.dir").resolve("data/cajeros.csv");
 
     static {
         loadFromFile();

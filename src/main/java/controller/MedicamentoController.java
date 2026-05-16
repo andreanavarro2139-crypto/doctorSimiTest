@@ -16,10 +16,10 @@ public class MedicamentoController {
     // Lista donde se guardarán los medicamentos
     private static ArrayList<Medicamento> listaMedicamentos = new ArrayList<>();
     // Prefer user home directory for stable storage across run configurations
-    private static final Path DATA_DIR = Paths.get(System.getProperty("user.home"), ".doctorSimiTest", "data");
+    private static final Path DATA_DIR = Paths.get(System.getProperty("user.dir"), "data");
     private static final Path DATA_FILE = DATA_DIR.resolve("medicamentos.csv");
     // legacy relative location (project-relative) - used to migrate if present
-    private static final Path LEGACY_DATA_FILE = Paths.get("data").resolve("medicamentos.csv");
+    private static final Path LEGACY_DATA_FILE = Paths.get("user.dir").resolve("data/medicamentos.csv");
 
     static {
         loadFromFile();
