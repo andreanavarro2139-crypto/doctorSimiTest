@@ -25,6 +25,8 @@ public class CajeroView extends JFrame {
         inicializarComponentes();
         agregarComponentes();
         agregarEventos();
+        // populate table with any saved cajeros
+        llenarTablaCajeros();
     }
 
     private void inicializarComponentes() {

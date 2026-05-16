@@ -25,6 +25,8 @@ public class GerenteView extends JFrame {
         inicializarComponentes();
         agregarComponentes();
         agregarEventos();
+        // populate table with any saved gerentes
+        llenarTablaGerentes();
     }
 
     private void inicializarComponentes() {

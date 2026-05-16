@@ -45,6 +45,8 @@ public class MedicamentoView extends JFrame {
         inicializarComponentes();
         agregarComponentes();
         agregarEventos();
+        // Load and display existing medicamentos saved on disk
+        llenarTablaMedicamentos();
     }
 
     private void configurarVentana() {
