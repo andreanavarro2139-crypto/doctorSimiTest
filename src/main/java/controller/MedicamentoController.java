@@ -35,6 +35,26 @@ public class MedicamentoController {
         return true;
     }
 
+    public static boolean nombreEsUnico(String nombre) {
+        if (nombre == null) return false;
+        for (Medicamento medicamento : listaMedicamentos) {
+            if (nombre.equalsIgnoreCase(medicamento.getNombre())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean nombreEsUnicoParaEdicion(int id, String nombre) {
+        if (nombre == null) return false;
+        for (Medicamento medicamento : listaMedicamentos) {
+            if (nombre.equalsIgnoreCase(medicamento.getNombre()) && medicamento.getId() != id) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static void editarMedicamento (Medicamento medicamentoEditado) {
         for (Medicamento medicamento : listaMedicamentos) {
             if (medicamento.getId() == medicamentoEditado.getId()){

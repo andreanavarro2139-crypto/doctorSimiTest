@@ -1,7 +1,6 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Medicamento {
     private int id;
@@ -9,7 +8,7 @@ public class Medicamento {
     private double precio;
     private LocalDate fechaDeCaducidad;
     private boolean enPromocion;
-    public static int stock;
+    private int stock;
 
 //CONSTRUCTOR
     public Medicamento() {
@@ -36,7 +35,7 @@ public class Medicamento {
         return enPromocion;
     }
 
-    public static int getStock() {
+    public int getStock() {
         return stock;
     }
 
@@ -60,8 +59,8 @@ public class Medicamento {
         this.enPromocion = enPromocion;
     }
 
-    public static void setStock(int stock) {
-        Medicamento.stock = stock;
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
     @Override

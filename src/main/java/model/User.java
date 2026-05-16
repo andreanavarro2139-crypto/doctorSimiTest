@@ -6,7 +6,7 @@ public class User {
     private String email;
     private String password;
     private Double salary;
-    private String type;
+    private String turno;
 
     public User() {
 
@@ -32,8 +32,8 @@ public class User {
         return salary;
     }
 
-    public String getType() {
-        return type;
+    public String getShift() {
+        return turno;
     }
 
     public void setId(int id) {
@@ -56,8 +56,8 @@ public class User {
         this.salary = slary;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTurno(String turno) {
+        this.turno = turno;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", slary=" + salary +
-                ", type='" + type + '\'' +
+                ", type='" + turno + '\'' +
                 '}';
     }
 }

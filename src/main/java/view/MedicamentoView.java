@@ -7,7 +7,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 
 public class MedicamentoView extends JFrame {
@@ -42,7 +41,6 @@ public class MedicamentoView extends JFrame {
     private JScrollPane scrollTabla;
 
     public MedicamentoView() {
-
         configurarVentana();
         inicializarComponentes();
         agregarComponentes();
@@ -78,7 +76,6 @@ public class MedicamentoView extends JFrame {
 
         // Botones
         btnCrear = new JButton("Crear");
-        btnLeer = new JButton("Leer");
         btnActualizar = new JButton("Actualizar");
         btnEliminar = new JButton("Eliminar");
         btnLimpiar = new JButton("Limpiar");
@@ -121,7 +118,6 @@ public class MedicamentoView extends JFrame {
 
         JPanel panelBotones = new JPanel();
         panelBotones.add(btnCrear);
-        panelBotones.add(btnLeer);
         panelBotones.add(btnActualizar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnLimpiar);
@@ -137,13 +133,12 @@ public class MedicamentoView extends JFrame {
 
     private void agregarEventos() {
         btnCrear.addActionListener(e -> crearMedicamento());
-        btnLeer.addActionListener(e -> leerMedicamentos());
         btnActualizar.addActionListener(e -> actualizarMedicamento());
         btnEliminar.addActionListener(e -> eliminarMedicamento());
         btnLimpiar.addActionListener(e -> limpiarCampos());
         btnMenuPrincipal.addActionListener(e -> {
             MainView.main(new String[]{});
-            dispose();//destruye la vista actual
+            dispose();
         });
 
         tablaMedicamentos.getSelectionModel().addListSelectionListener(e -> {
@@ -153,48 +148,70 @@ public class MedicamentoView extends JFrame {
         });
     }
 
-    // =========================
-    // MÉTODOS CRUD (ESQUELETO)
-    // =========================
-
     private void crearMedicamento() {
-        boolean fechaValida;
-        int id = Integer.parseInt(txtId.getText());
-        String nombre = txtNombre.getText();
-        double precio = Double.parseDouble(txtPrecio.getText());
-        LocalDate fecha = null;
+        // Validate fields
+        String idStr = txtId.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        String precioStr = txtPrecio.getText().trim();
+        String fechaStr = txtFechaCaducidad.getText().trim();
         boolean enPromocion = chkEnPromocion.isSelected();
-        int stock = Integer.parseInt(txtStock.getText());
+        String stockStr = txtStock.getText().trim();
 
-        try{
-            fecha = LocalDate.parse(txtFechaCaducidad.getText());
-            fechaValida = true;
-        }catch(Exception e){
-            JOptionPane miAlerta = new JOptionPane();
-            JOptionPane.showMessageDialog(miAlerta, "La fecha no tiene formato válido");
-            fechaValida = false;
+        if (idStr.isEmpty() || nombre.isEmpty() || precioStr.isEmpty() || fechaStr.isEmpty() || stockStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios");
+            return;
         }
 
-        if(fechaValida) {
-            //validar que el id no esté guardado
-            boolean EsUnico = MedicamentoController.idEsUnico(id);
-
-            if(EsUnico) {
-                MedicamentoController.guardarMedicamento(id,nombre,precio,fecha,enPromocion,stock);
-                // Mostrar en tabla
-                llenarTablaMedicamentos();
-                limpiarCampos();
-            }else{
-                System.out.println("No puedes guardar ese id porque ya está siendo utilizado");
-                //TODO: mostrar una alerta en la vista
-
-                JOptionPane miAlerta = new JOptionPane();
-                JOptionPane.showMessageDialog(miAlerta, "Ese id ya está siendo utilizado");
-
-            }
+        int id;
+        double precio;
+        int stock;
+        LocalDate fecha = null;
+        try {
+            id = Integer.parseInt(idStr);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "ID debe ser numérico");
+            return;
+        }
+        try {
+            precio = Double.parseDouble(precioStr);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Precio debe ser numérico");
+            return;
+        }
+        try {
+            stock = Integer.parseInt(stockStr);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Stock debe ser numérico");
+            return;
+        }
+        try {
+            fecha = LocalDate.parse(fechaStr);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "La fecha no tiene formato válido (AAAA-MM-DD)");
+            return;
         }
 
+        if (precio < 0) {
+            JOptionPane.showMessageDialog(this, "El precio no puede ser negativo");
+            return;
+        }
+        if (stock < 0) {
+            JOptionPane.showMessageDialog(this, "El stock no puede ser negativo");
+            return;
+        }
 
+        if (!MedicamentoController.idEsUnico(id)) {
+            JOptionPane.showMessageDialog(this, "Ese ID ya está siendo utilizado");
+            return;
+        }
+        if (!MedicamentoController.nombreEsUnico(nombre)) {
+            JOptionPane.showMessageDialog(this, "Ese nombre de medicamento ya está en uso");
+            return;
+        }
+
+        MedicamentoController.guardarMedicamento(id, nombre, precio, fecha, enPromocion, stock);
+        llenarTablaMedicamentos();
+        limpiarCampos();
     }
 
     private void llenarTablaMedicamentos() {
@@ -225,24 +242,48 @@ public class MedicamentoView extends JFrame {
     }
 
     private void leerMedicamentos() {
-        // Aquí debes programar la lógica para mostrar en la tabla
-        // todos los medicamentos que estén guardados en la lista.
-
-        /*
-        Idea:
-        1. Limpiar las filas actuales de la tabla
-        2. Recorrer el ArrayList
-        3. Agregar cada medicamento como una nueva fila
-        */
+        llenarTablaMedicamentos();
     }
 
     private void actualizarMedicamento() {
-        int id = Integer.parseInt(txtId.getText());
-        String nuevoNombre = txtNombre.getText();
-        double nuevoPrecio = Double.parseDouble(txtPrecio.getText());
-        LocalDate nuevaFecha = LocalDate.parse(txtFechaCaducidad.getText());
+        // Validate inputs similar to create
+        String idStr = txtId.getText().trim();
+        String nuevoNombre = txtNombre.getText().trim();
+        String precioStr = txtPrecio.getText().trim();
+        String fechaStr = txtFechaCaducidad.getText().trim();
         boolean nuevoEnPromocion = chkEnPromocion.isSelected();
-        int nuevoStock = Integer.parseInt(txtStock.getText());
+        String stockStr = txtStock.getText().trim();
+
+        if (idStr.isEmpty() || nuevoNombre.isEmpty() || precioStr.isEmpty() || fechaStr.isEmpty() || stockStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios");
+            return;
+        }
+
+        int id;
+        double nuevoPrecio;
+        int nuevoStock;
+        LocalDate nuevaFecha;
+        try {
+            id = Integer.parseInt(idStr);
+            nuevoPrecio = Double.parseDouble(precioStr);
+            nuevoStock = Integer.parseInt(stockStr);
+            nuevaFecha = LocalDate.parse(fechaStr);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "ID, precio, stock y fecha deben tener formato válido");
+            return;
+        }
+        if (nuevoPrecio < 0) {
+            JOptionPane.showMessageDialog(this, "El precio no puede ser negativo");
+            return;
+        }
+        if (nuevoStock < 0) {
+            JOptionPane.showMessageDialog(this, "El stock no puede ser negativo");
+            return;
+        }
+        if (!MedicamentoController.nombreEsUnicoParaEdicion(id, nuevoNombre)) {
+            JOptionPane.showMessageDialog(this, "Ese nombre de medicamento ya está en uso");
+            return;
+        }
 
         Medicamento medicamentoEditado = new Medicamento();
         medicamentoEditado.setId(id);
